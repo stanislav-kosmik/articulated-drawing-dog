@@ -3,6 +3,7 @@
 import os, json
 import params as Q
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+G_ZB, G_ZM = Q.fz(Q.BELLY_PY), Q.fz(Q.MID_BELLY_PY)
 V = json.load(open(f"{ROOT}/build/validation.json")); S = json.load(open(f"{ROOT}/build/slicing.json"))
 bb = V["assembled_bbox_mm"]; J1, J2 = V["joint_1"], V["joint_2"]; D = J1["dimensions_mm"]; A = V["architecture"]
 URL = "https://drive.google.com/file/d/13HVwXR2jKd8h_SItTTXizeP983Ik6S_V/view?usp=drivesdk"
@@ -33,7 +34,7 @@ The side silhouette is traced from the drawing; the body bends at **two joints i
 | Printed pieces | **3** — `stl/rear.stl`, `stl/middle.stl`, `stl/front.stl` (no pins, no glue, no hardware) |
 | Joints | exactly 2, both vertical-axis snap pivots hidden inside the torso |
 | Movement | joint 1: {J1['hard_stop_deg'][1]}° … +{J1['hard_stop_deg'][0]}°, joint 2: {J2['hard_stop_deg'][1]}° … +{J2['hard_stop_deg'][0]}° left/right (hard stops); up to {V['combined_poses']['max_total_bend_deg']}° combined curve |
-| Middle piece | {A['middle_length_at_side_mm']} mm long at the flanks, same cross-section as the torso |
+| Middle piece | {A['middle_length_at_side_mm']} mm long at the flanks, {M['stl/middle.stl']['bbox_mm'][2]} mm deep — sized to the box in the drawing |
 | Source drawing | {URL} (copy: `source_drawing.jpg`) |
 
 More views: [side](renders/side.png) · [opposite side](renders/opposite_side.png) · [front](renders/front.png) · [rear](renders/rear.png) · [top](renders/top.png) · [perspective](renders/perspective.png)
@@ -44,7 +45,7 @@ More views: [side](renders/side.png) · [opposite side](renders/opposite_side.pn
 
 Each joint is a **vertical pivot post with a snap-on C-clip**:
 
-* The rear and the front section each contain a Ø{D['post_diameter']} mm vertical **post** standing in a {D['slot_height']} mm high slot at belly level.
+* The rear and the front section each contain a Ø{D['post_diameter']} mm vertical **post** standing in a {D['slot_height']} mm high slot.
 * The middle piece has a flat **tongue** at each end ({D['tongue_thickness']} mm thick, {D['neck_width']} mm neck) ending in a **C-shaped clip** that wraps {D['clip_wrap_deg']:.0f}° of the post.
   It is printed flat, so the clip arms flex within the layers — the strong direction.
 * Push the tongue into the slot and the clip snaps over the post. It then turns only about the vertical axis (yaw);
@@ -62,26 +63,26 @@ Clearances (all parameters in `source/params.py`):
 | Room around the clip (for snapping) | {D['radial_room_around_clip']} mm radial, {Q.CORRIDOR_EXTRA} mm per side in the insertion corridor |
 | Clip on post | not a clearance fit: the clip bore is Ø{D['clip_bore_diameter']} on a Ø{D['post_diameter']} post, i.e. **{D['clip_radial_preload']} mm radial elastic preload**. The spring grip is what holds a pose; it tolerates printer variation because the arms flex. |
 
-If your printer makes the joints too stiff or too loose, change `CLIP_PRELOAD` (0.00 = looser, 0.20 = tighter) and re-run `generate.py`; only `middle.stl` changes (38 min print).
+If your printer makes the joints too stiff or too loose, change `CLIP_PRELOAD` (0.00 = looser, 0.20 = tighter) and re-run `generate.py`; only `middle.stl` changes (about an hour to reprint).
 
 ## Printing (PLA, 0.4 mm nozzle, 0.20 mm layers, 3 perimeters, 15 % infill)
 
 | Part | Orientation (as in the STL) | Supports | Brim | Time | Filament |
 |---|---|---|---|---|---|
 | `rear.stl` | standing on its two feet | **none** | 5 mm recommended | {S['rear']['print_time']} | {S['rear']['filament_g']} g |
-| `middle.stl` | lying on its belly, tongues on the bed | **none** | no | {S['middle']['print_time']} | {S['middle']['filament_g']} g |
+| `middle.stl` | standing on its flat belly | **build plate only** — two small pads under the tongues ({S['middle']['support_filament_g']} g) | no | {S['middle']['print_time']} | {S['middle']['filament_g']} g |
 | `front.stl` | standing on its two feet | **build plate only**, overhang threshold 20° — a single column under chin and throat ({S['front']['support_filament_g']} g) | 5 mm recommended | {S['front']['print_time']} | {S['front']['filament_g']} g |
 
 Total about **{tot_t}** and **{tot_g:.0f} g** (PrusaSlicer estimate). `dog_print.3mf` has all three parts on one plate.
 
 Important: use *build-plate-only* supports. "Supports everywhere" would fill the joint slots. With build-plate-only supports nothing can get
 into the slots (checked in the g-code: {S['front']['support_moves_inside_joint_pocket']} support moves inside the joint).
-All undersides of the rear and front sections are shaped at 45° or steeper so they print without support.
+All undersides of the rear section are shaped at 45° or steeper, so it prints without any support.
 
 ## Assembly
 
 1. Remove brim and the support column under the chin.
-2. Hold the middle piece with its flat belly down. Push one tongue straight into the slot at the cut face of the rear section until it clicks onto the post.
+2. Clean the support pads off the underside of the two tongues. Hold the middle piece belly down and push one tongue straight into the slot at the cut face of the rear section until it clicks onto the post.
 3. Push the front section onto the other tongue the same way.
 4. To take it apart, pull the sections straight apart.
 
@@ -100,7 +101,7 @@ validation_report.md measured results
 ```
 Rebuild: `cd source && python3 generate.py && python3 make_3mf.py && python3 validate.py && python3 slice_all.py && blender -b -P render_blender.py && python3 compare.py && python3 demo.py && python3 build_docs.py`
 
-Version 1 (movable head and tail) is superseded; it remains available under release v1.0.
+Earlier versions remain available as releases v1.0 (movable head and tail, superseded) and v2.0 (shallower middle piece).
 """
 open(f"{ROOT}/README.md", "w").write(readme)
 
@@ -184,6 +185,7 @@ Slicer: **{S['slicer']}**. Settings: `{S['settings']}`.
 |---|---|---|---|---|---|---|---|---|
 {srows}
 * Production total (rear + middle + front): **{tot_t}, {tot_g:.0f} g**.
+* Middle: supports only under the two tongues ({S['middle']['support_filament_g']} g).
 * Rear: no supports. The only flat ceilings are the two short bridges around the pivot post ({S['rear'].get('flat_ceilings_by_height_mm2', {})} mm² by height).
 * Front: supports only at model x = {S['front']['support_region_model_coords']['x']} mm (chin / throat column); support moves inside the joint slot: **{S['front']['support_moves_inside_joint_pocket']}**.
 * A self-support pass in the generator removed {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['rear']:.1f} cm³ (rear) and {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['front']:.1f} cm³ (front) of material that would have needed support; this only affects undersides hidden in the side view.
@@ -194,6 +196,7 @@ Slicer: **{S['slicer']}**. Settings: `{S['settings']}`.
 * Not physically printed; the snap force and joint friction depend on the printer. `CLIP_PRELOAD` is the single tuning parameter.
 * Legs are staggered (one forward, one back on each end) to reproduce the four legs visible in the drawing. To print without support, the undersides
   between them are 45° facets rather than soft curves, and the slit between the rear legs is shorter than drawn.
+* The middle piece reaches down to the bottom of the drawn box, so its tongues sit {round(G_ZB - G_ZM, 1)} mm above the bed and need two small support pads; their undersides will be slightly rough (the slot has {Q.FLOOR_CLEAR} mm clearance below the tongue for that).
 * A 45° wedge under each joint (behind the front legs, in front of the rear thigh) carries the slot floor; it sits slightly outside the drawn outline.
 * The inside of the tail hook is filled to a 35° chord so the tail prints without support; the outer curve follows the drawing.
 * The rear and front sections stand on two small feet while printing, so a brim is recommended.

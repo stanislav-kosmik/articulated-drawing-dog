@@ -21,7 +21,8 @@ import params as Q
 OUT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SEG = 128
 H = Q.VOXEL
-ZB = Q.fz(Q.BELLY_PY)                       # belly height
+ZB = Q.fz(Q.BELLY_PY)                       # underside of the tongues / belly of the rear and front stubs
+ZM = Q.fz(Q.MID_BELLY_PY)                   # belly of the (deeper) middle piece
 XSA, XSB = Q.fx(Q.SEAM_A_PX), Q.fx(Q.SEAM_B_PX)
 SETBACK = Q.SEAM_R - np.sqrt(Q.SEAM_R ** 2 - Q.BODY_HALF_W ** 2)
 XA = XSA + SETBACK - Q.SEAM_R               # pivot A (rear <-> middle), inside the rear section
@@ -211,9 +212,13 @@ def main():
     R, g = Q.SEAM_R, Q.SEAM_GAP
     F_rear = np.maximum(F, np.minimum(dA - R, X - XA))
     F_front = np.maximum(F, np.minimum(dB - R, XB - X))
-    F_mid = np.maximum.reduce([F, (R + g) - dA, (R + g) - dB, XA - X, X - XB])
-    F_mid = np.maximum(F_mid, ((np.abs(Y) - Q.BODY_HALF_W) + (ZB + Q.MID_CHAMFER - Z)) / np.sqrt(2))
-    F_mid = np.maximum(F_mid, ZB - Z)
+    # the middle piece reaches down to the bottom edge of the drawn box
+    x2, z2 = X[:, 0, :], Z[:, 0, :]
+    box = Q.P([(400, Q.MID_BOX_TOP_PY), (720, Q.MID_BOX_TOP_PY), (720, Q.MID_BELLY_PY), (400, Q.MID_BELLY_PY)])
+    F_box = gaussian_filter(extrude(sd_poly(x2, z2, box)[:, None, :], np.abs(Y), Q.BODY_HALF_W, Q.BODY_EDGE_R), Q.BLUR / H)
+    F_mid = np.maximum.reduce([np.minimum(F, F_box), (R + g) - dA, (R + g) - dB, XA - X, X - XB])
+    F_mid = np.maximum(F_mid, ((np.abs(Y) - Q.BODY_HALF_W) + (ZM + Q.MID_CHAMFER - Z)) / np.sqrt(2))
+    F_mid = np.maximum(F_mid, ZM - Z)
     F_rear, v_r = self_support(F_rear, ax, X, Z_CEIL + 1.0)
     F_front, v_f = self_support(F_front, ax, X, Z_CEIL + 1.0, exempt=(X > Q.fx(815)))
     print(f"self-support pass removed {v_r / 1000:.2f} cm3 from rear, {v_f / 1000:.2f} cm3 from front")
@@ -224,7 +229,7 @@ def main():
     middle = mid_s + place(tongue(), "A") + place(tongue(), "B")
     middle_inst = mid_s + place(tongue(Q.POST_R + 0.01), "A") + place(tongue(Q.POST_R + 0.01), "B")
     parts = dict(rear=rear, middle=middle, front=front)
-    info = dict(pivot_A_x=XA, pivot_B_x=XB, belly_z=ZB, slot_floor_z=Z_FLOOR, slot_ceiling_z=Z_CEIL, clip_ri=CLIP_RI, clip_ro=CLIP_RO,
+    info = dict(pivot_A_x=XA, pivot_B_x=XB, belly_z=ZB, middle_belly_z=ZM, slot_floor_z=Z_FLOOR, slot_ceiling_z=Z_CEIL, clip_ri=CLIP_RI, clip_ro=CLIP_RO,
                 self_support_removed_cm3=dict(rear=v_r / 1000, front=v_f / 1000), parts={})
     for n in parts:
         parts[n] = parts[n].simplify(0.004)
@@ -240,7 +245,7 @@ def main():
     # print orientation: rear and front stand on their feet, middle lies on its belly
     export(parts["rear"], f"{OUT}/stl/rear.stl")
     export(parts["front"], f"{OUT}/stl/front.stl")
-    export(parts["middle"].translate((0, 0, -ZB)), f"{OUT}/stl/middle.stl")
+    export(parts["middle"].translate((0, 0, -ZM)), f"{OUT}/stl/middle.stl")
     asm = Manifold.compose([parts["rear"], middle_inst.simplify(0.004), parts["front"]])
     export(asm, f"{OUT}/build/dog_assembled.stl")
     bb = asm.bounding_box()

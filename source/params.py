@@ -16,11 +16,13 @@ def fx(x): return (x - X0) * S
 def fz(y): return (Y0 - y) * S
 
 # ------------------------------------------------------------------ silhouette (image pixels)
-BELLY_PY = 722
+BELLY_PY = 722        # belly line of the rear/front torso stubs = underside of the joint tongues
+MID_BELLY_PY = 790    # bottom edge of the middle piece (the box in the drawing)
+MID_BOX_TOP_PY = 640
 TORSO_PX = [(118, 604), (215, 548), (445, 560), (650, 572), (748, 582),      # rump top -> back line -> neck base
             (806, 790), (798, 802), (720, 802),                              # inside chest -> chest bottom
-            (640, 722), (488, 722),                                          # 45deg gusset to belly, belly line
-            (410, 800), (380, 830), (104, 830), (104, 800), (108, 700)]      # thigh diagonal, haunch bottom, rump
+            (640, 722), (503, 722),                                          # 45deg gusset to belly, belly line
+            (420, 805), (380, 830), (104, 830), (104, 800), (108, 700)]      # thigh diagonal, haunch bottom, rump
 NECK_HEAD_PX = [(700, 585), (748, 582), (790, 572), (850, 523), (885, 503), (900, 497), (960, 505), (985, 555),
                 (1000, 595), (1000, 690), (950, 691), (900, 700), (860, 720), (830, 750), (806, 790), (798, 802),
                 (760, 802), (700, 700)]
@@ -30,7 +32,7 @@ TAIL_PX = [(118, 620), (118, 612), (106, 560), (103, 500), (108, 450), (122, 410
            (181, 437), (172, 470), (176, 505), (192, 530), (215, 548), (215, 620)]  # inner curve (chord >= 35deg so it prints unsupported)
 # legs: polygon (px), side (-1 near / +1 far)
 LEGS_PX = [
-    ([(104, 1070), (104, 800), (413, 800), (228, 985), (228, 1012), (254, 1024), (257, 1070)], -1),   # rear leg 1 (near) + 45deg thigh
+    ([(104, 1070), (104, 800), (424, 800), (228, 996), (228, 1012), (254, 1024), (257, 1070)], -1),   # rear leg 1 (near) + 45deg thigh
     ([(257, 1070), (257, 800), (410, 800), (380, 830), (342, 890), (327, 950), (330, 1000), (352, 1030), (352, 1070)], +1),  # rear leg 2 (far)
     ([(650, 1070), (650, 722), (714, 722), (714, 1010), (724, 1022), (726, 1070)], +1),               # front leg A (far)
     ([(730, 1070), (730, 800), (798, 800), (796, 830), (796, 1010), (806, 1022), (808, 1070)], -1),   # front leg B (near)
@@ -46,10 +48,10 @@ HEAD_HALF_W = 11.5;  HEAD_EDGE_R = 6.0
 MUZZLE_HALF_W = 8.0; MUZZLE_EDGE_R = 4.5
 TAIL_HALF_W = 5.0;   TAIL_EDGE_R = 4.2
 LEG_HALF_W = 5.75;   LEG_EDGE_R = 3.0;  LEG_Y = 9.25
-MID_CHAMFER = 4.0     # 45deg chamfer on the bottom edges of the middle piece (prints belly-down without support)
+MID_CHAMFER = 4.0     # 45deg chamfer on the bottom edges of the middle piece (prints belly-down)
 
 # ------------------------------------------------------------------ the two joints (vertical-axis snap pivots)
-SEAM_A_PX = 470       # where seam A meets the side wall (image x)
+SEAM_A_PX = 485       # where seam A meets the side wall (image x)
 SEAM_B_PX = 650
 SEAM_R = 18.0         # radius of the cylindrical seam about each pivot axis
 SEAM_GAP = 0.5        # gap between the concentric seam faces
@@ -59,7 +61,7 @@ CLIP_PRELOAD = 0.10   # clip bore is this much smaller (radius) than the post ->
 MOUTH_HALF_ANGLE = 72.0   # half opening angle of the C-clip mouth
 NECK_W = 6.0          # width of the tongue neck
 TONGUE_T = 7.0        # tongue thickness (vertical)
-FLOOR_CLEAR = 0.20    # clearance under the tongue
+FLOOR_CLEAR = 0.30    # clearance under the tongue
 CEIL_CLEAR = 0.35     # clearance above the tongue (ceiling is a short printed bridge around the post)
 POCKET_RADIAL = 0.9   # radial room around the clip ring (lets the arms open while snapping)
 CORRIDOR_EXTRA = 0.7  # the straight insertion corridor is this much wider (per side) than the clip ring

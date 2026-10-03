@@ -1,5 +1,5 @@
 {
- "slicer": "[2026-10-03 09:16:15.373618] [0x00007b485160bd00] [trace]   Initializing StaticPrintConfigs",
+ "slicer": "[2026-10-03 14:55:15.982694] [0x0000717f8d6a0d00] [trace]   Initializing StaticPrintConfigs",
  "settings": "--nozzle-diameter 0.4 --layer-height 0.2 --first-layer-height 0.2 --perimeters 3 --top-solid-layers 5 --bottom-solid-layers 4 --fill-density 15% --fill-pattern gyroid --filament-diameter 1.75 --filament-density 1.24 --filament-type PLA --temperature 210 --first-layer-temperature 215 --bed-temperature 60 --first-layer-bed-temperature 60",
  "rear": {
   "file": "stl/rear.stl",
@@ -7,11 +7,11 @@
   "supports": "none",
   "brim_mm": 5,
   "slicer_messages": [],
-  "print_time": "3h 15m 12s",
-  "filament_g": "37.70",
+  "print_time": "3h 19m 6s",
+  "filament_g": "38.65",
   "layers": 567,
   "extrusion_share_percent": {
-   "Internal infill": 36.2,
+   "Internal infill": 36.5,
    "Perimeter": 32.8,
    "External perimeter": 17.2,
    "Solid infill": 10.7,
@@ -24,8 +24,8 @@
   "support_share_percent": 0.0,
   "support_filament_g": 0.0,
   "bed_contact_area_mm2": 409.5,
-  "overhang_gt60deg_area_mm2": 167.1,
-  "flat_ceiling_area_mm2": 116.5,
+  "overhang_gt60deg_area_mm2": 168.2,
+  "flat_ceiling_area_mm2": 116.7,
   "flat_ceilings_by_height_mm2": {
    "58.9": 116.3
   }
@@ -33,29 +33,33 @@
  "middle": {
   "file": "stl/middle.stl",
   "sliced_ok": true,
-  "supports": "none",
+  "supports": "build plate only",
   "brim_mm": 0,
   "slicer_messages": [],
-  "print_time": "38m 1s",
-  "filament_g": "7.50",
-  "layers": 125,
+  "print_time": "56m 38s",
+  "filament_g": "12.00",
+  "layers": 203,
   "extrusion_share_percent": {
-   "Perimeter": 40.5,
-   "External perimeter": 23.4,
-   "Internal infill": 22.9,
-   "Solid infill": 9.6,
-   "Bridge infill": 1.4,
-   "Top solid infill": 1.2,
-   "Gap fill": 0.6,
-   "Overhang perimeter": 0.3,
+   "Perimeter": 33.5,
+   "External perimeter": 19.1,
+   "Internal infill": 18.3,
+   "Support material": 15.1,
+   "Support material interface": 6.0,
+   "Solid infill": 5.3,
+   "Bridge infill": 1.1,
+   "Top solid infill": 0.6,
+   "Overhang perimeter": 0.5,
+   "Gap fill": 0.4,
    "Skirt/Brim": 0.2
   },
-  "support_share_percent": 0.0,
-  "support_filament_g": 0.0,
-  "bed_contact_area_mm2": 359.0,
-  "overhang_gt60deg_area_mm2": 75.1,
-  "flat_ceiling_area_mm2": 0.2,
-  "flat_ceilings_by_height_mm2": {}
+  "support_share_percent": 21.1,
+  "support_filament_g": 2.53,
+  "bed_contact_area_mm2": 128.7,
+  "overhang_gt60deg_area_mm2": 254.6,
+  "flat_ceiling_area_mm2": 197.8,
+  "flat_ceilings_by_height_mm2": {
+   "10.7": 197.4
+  }
  },
  "front": {
   "file": "stl/front.stl",
@@ -63,7 +67,7 @@
   "supports": "build plate only",
   "brim_mm": 5,
   "slicer_messages": [],
-  "print_time": "3h 24m 27s",
+  "print_time": "3h 24m 28s",
   "filament_g": "35.20",
   "layers": 663,
   "extrusion_share_percent": {
@@ -97,7 +101,7 @@
    ]
   },
   "bed_contact_area_mm2": 241.0,
-  "overhang_gt60deg_area_mm2": 564.5,
+  "overhang_gt60deg_area_mm2": 563.7,
   "flat_ceiling_area_mm2": 287.0,
   "flat_ceilings_by_height_mm2": {
    "43.1": 2.1,
@@ -119,17 +123,17 @@
   "supports": "none",
   "brim_mm": 5,
   "slicer_messages": [],
-  "print_time": "7h 2m 52s",
-  "filament_g": "73.87",
+  "print_time": "7h 11m 48s",
+  "filament_g": "76.62",
   "layers": 567,
   "extrusion_share_percent": {
-   "Perimeter": 33.1,
+   "Perimeter": 33.6,
    "Internal infill": 31.4,
-   "External perimeter": 17.7,
-   "Solid infill": 14.2,
+   "External perimeter": 18.0,
+   "Solid infill": 13.7,
    "Bridge infill": 1.6,
    "Top solid infill": 1.0,
-   "Skirt/Brim": 0.8,
+   "Skirt/Brim": 0.5,
    "Overhang perimeter": 0.2,
    "Gap fill": 0.1
   },
