@@ -10,7 +10,7 @@ BASE = ["prusa-slicer", "--export-gcode", "--nozzle-diameter", "0.4", "--layer-h
         "--first-layer-temperature", "215", "--bed-temperature", "60", "--first-layer-bed-temperature", "60", "--gcode-comments"]
 BRIM = ["--brim-width", "5"]
 SUP = ["--support-material", "--support-material-buildplate-only", "--support-material-threshold", "20"]
-JOBS = {"rear": ("stl/rear.stl", BRIM, (110, 110)), "middle": ("stl/middle.stl", SUP, (110, 110)), "front": ("stl/front.stl", BRIM + SUP, (110, 110)),
+JOBS = {"rear": ("stl/rear.stl", BRIM + SUP, (110, 110)), "middle": ("stl/middle.stl", SUP, (110, 110)), "front": ("stl/front.stl", BRIM + SUP, (110, 110)),
         "plate_3mf": ("dog_print.3mf", BRIM, (110, 110))}
 ver = subprocess.run(["prusa-slicer", "--help"], capture_output=True, text=True).stdout.splitlines()[0]
 res = {"slicer": ver, "settings": " ".join(BASE[2:-1])}

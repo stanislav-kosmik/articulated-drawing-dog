@@ -32,7 +32,7 @@ TAIL_PX = [(118, 620), (118, 612), (106, 560), (103, 500), (108, 450), (122, 410
            (181, 437), (172, 470), (176, 505), (192, 530), (215, 548), (215, 620)]  # inner curve (chord >= 35deg so it prints unsupported)
 # legs: polygon (px), side (-1 near / +1 far)
 LEGS_PX = [
-    ([(104, 1070), (104, 800), (424, 800), (228, 996), (228, 1012), (254, 1024), (257, 1070)], -1),   # rear leg 1 (near) + 45deg thigh
+    ([(104, 1070), (104, 800), (196, 800), (196, 1012), (222, 1024), (225, 1070)], -1),                # rear leg 1 (near): plain column
     ([(257, 1070), (257, 800), (410, 800), (380, 830), (342, 890), (327, 950), (330, 1000), (352, 1030), (352, 1070)], +1),  # rear leg 2 (far)
     ([(650, 1070), (650, 722), (714, 722), (714, 1010), (724, 1022), (726, 1070)], +1),               # front leg A (far)
     ([(730, 1070), (730, 800), (798, 800), (796, 830), (796, 1010), (806, 1022), (808, 1070)], -1),   # front leg B (near)
@@ -69,3 +69,5 @@ SIDE_CLEAR = 0.40     # clearance between neck and the stop faces of the sector
 YAW_RANGE = 30.0      # usable yaw each side
 YAW_STOP_MARGIN = 1.0 # the sector is cut this much wider than YAW_RANGE
 NOSE_CHAMFER_D = 8.3  # beyond this distance from the pivot the pocket ceiling rises at 45deg (self-supporting, no bridge)
+
+REAR_SELF_SUPPORT = False   # False: rear legs/haunch follow the drawing (gap between the legs) and the rear prints on build-plate supports

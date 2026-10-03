@@ -219,7 +219,7 @@ def main():
     F_mid = np.maximum.reduce([np.minimum(F, F_box), (R + g) - dA, (R + g) - dB, XA - X, X - XB])
     F_mid = np.maximum(F_mid, ((np.abs(Y) - Q.BODY_HALF_W) + (ZM + Q.MID_CHAMFER - Z)) / np.sqrt(2))
     F_mid = np.maximum(F_mid, ZM - Z)
-    F_rear, v_r = self_support(F_rear, ax, X, Z_CEIL + 1.0)
+    F_rear, v_r = self_support(F_rear, ax, X, Z_CEIL + 1.0) if Q.REAR_SELF_SUPPORT else (F_rear, 0.0)
     F_front, v_f = self_support(F_front, ax, X, Z_CEIL + 1.0, exempt=(X > Q.fx(815)))
     print(f"self-support pass removed {v_r / 1000:.2f} cm3 from rear, {v_f / 1000:.2f} cm3 from front")
     rear_s = to_manifold(F_rear, ax, "rear"); mid_s = to_manifold(F_mid, ax, "middle"); front_s = to_manifold(F_front, ax, "front")

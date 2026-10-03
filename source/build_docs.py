@@ -69,7 +69,7 @@ If your printer makes the joints too stiff or too loose, change `CLIP_PRELOAD` (
 
 | Part | Orientation (as in the STL) | Supports | Brim | Time | Filament |
 |---|---|---|---|---|---|
-| `rear.stl` | standing on its two feet | **none** | 5 mm recommended | {S['rear']['print_time']} | {S['rear']['filament_g']} g |
+| `rear.stl` | standing on its two feet | **build plate only**, threshold 20° — under the haunch around the legs ({S['rear']['support_filament_g']} g) | 5 mm recommended | {S['rear']['print_time']} | {S['rear']['filament_g']} g |
 | `middle.stl` | standing on its flat belly | **build plate only** — two small pads under the tongues ({S['middle']['support_filament_g']} g) | no | {S['middle']['print_time']} | {S['middle']['filament_g']} g |
 | `front.stl` | standing on its two feet | **build plate only**, overhang threshold 20° — a single column under chin and throat ({S['front']['support_filament_g']} g) | 5 mm recommended | {S['front']['print_time']} | {S['front']['filament_g']} g |
 
@@ -77,11 +77,11 @@ Total about **{tot_t}** and **{tot_g:.0f} g** (PrusaSlicer estimate). `dog_print
 
 Important: use *build-plate-only* supports. "Supports everywhere" would fill the joint slots. With build-plate-only supports nothing can get
 into the slots (checked in the g-code: {S['front']['support_moves_inside_joint_pocket']} support moves inside the joint).
-All undersides of the rear section are shaped at 45° or steeper, so it prints without any support.
+The slot floors are closed underneath, which is what keeps build-plate supports out of the joints.
 
 ## Assembly
 
-1. Remove brim and the support column under the chin.
+1. Remove the brims, the support under the haunch (rear) and the support column under the chin (front).
 2. Clean the support pads off the underside of the two tongues. Hold the middle piece belly down and push one tongue straight into the slot at the cut face of the rear section until it clicks onto the post.
 3. Push the front section onto the other tongue the same way.
 4. To take it apart, pull the sections straight apart.
@@ -101,7 +101,7 @@ validation_report.md measured results
 ```
 Rebuild: `cd source && python3 generate.py && python3 make_3mf.py && python3 validate.py && python3 slice_all.py && blender -b -P render_blender.py && python3 compare.py && python3 demo.py && python3 build_docs.py`
 
-Earlier versions remain available as releases v1.0 (movable head and tail, superseded) and v2.0 (shallower middle piece).
+Earlier versions remain available as releases v1.0 (movable head and tail, superseded), v2.0 and v2.1.
 """
 open(f"{ROOT}/README.md", "w").write(readme)
 
@@ -186,20 +186,20 @@ Slicer: **{S['slicer']}**. Settings: `{S['settings']}`.
 {srows}
 * Production total (rear + middle + front): **{tot_t}, {tot_g:.0f} g**.
 * Middle: supports only under the two tongues ({S['middle']['support_filament_g']} g).
-* Rear: no supports. The only flat ceilings are the two short bridges around the pivot post ({S['rear'].get('flat_ceilings_by_height_mm2', {})} mm² by height).
+* Rear: supports only under the haunch, model x = {S['rear']['support_region_model_coords']['x']} mm, up to z = {S['rear']['support_region_model_coords']['z'][1]} mm; support moves inside the joint slot: **{S['rear']['support_moves_inside_joint_pocket']}**.
 * Front: supports only at model x = {S['front']['support_region_model_coords']['x']} mm (chin / throat column); support moves inside the joint slot: **{S['front']['support_moves_inside_joint_pocket']}**.
-* A self-support pass in the generator removed {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['rear']:.1f} cm³ (rear) and {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['front']:.1f} cm³ (front) of material that would have needed support; this only affects undersides hidden in the side view.
+* A self-support pass in the generator removed {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['rear']:.1f} cm³ (rear) and {json.load(open(f"{ROOT}/build/geometry_info.json"))['self_support_removed_cm3']['front']:.1f} cm³ (front) of material that would have needed support (the pass is switched off for the rear so its legs follow the drawing).
 * The plate file was sliced without supports only to confirm it loads; for a real print enable build-plate-only supports for the front part.
 
 ## Known compromises
 
 * Not physically printed; the snap force and joint friction depend on the printer. `CLIP_PRELOAD` is the single tuning parameter.
-* Legs are staggered (one forward, one back on each end) to reproduce the four legs visible in the drawing. To print without support, the undersides
-  between them are 45° facets rather than soft curves, and the slit between the rear legs is shorter than drawn.
+* Legs are staggered (one forward, one back on each end) to reproduce the four legs and the gap between the rear legs visible in the drawing.
+  The rear haunch therefore has a flat underside around the legs and needs build-plate supports there; under the front chest the undersides are 45° facets instead.
 * The middle piece reaches down to the bottom of the drawn box, so its tongues sit {round(G_ZB - G_ZM, 1)} mm above the bed and need two small support pads; their undersides will be slightly rough (the slot has {Q.FLOOR_CLEAR} mm clearance below the tongue for that).
 * A 45° wedge under each joint (behind the front legs, in front of the rear thigh) carries the slot floor; it sits slightly outside the drawn outline.
 * The inside of the tail hook is filled to a 35° chord so the tail prints without support; the outer curve follows the drawing.
-* The rear and front sections stand on two small feet while printing, so a brim is recommended.
+* The rear and front sections stand on two small feet while printing, so a brim is recommended. All three parts use build-plate-only supports.
 * The dark scribble between rear body and middle box in the drawing is not modelled.
 * PLA relaxes under constant strain, so joint friction will soften somewhat over time.
 """

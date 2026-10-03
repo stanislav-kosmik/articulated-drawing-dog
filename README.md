@@ -52,19 +52,19 @@ If your printer makes the joints too stiff or too loose, change `CLIP_PRELOAD` (
 
 | Part | Orientation (as in the STL) | Supports | Brim | Time | Filament |
 |---|---|---|---|---|---|
-| `rear.stl` | standing on its two feet | **none** | 5 mm recommended | 3h 19m 6s | 38.65 g |
+| `rear.stl` | standing on its two feet | **build plate only**, threshold 20° — under the haunch around the legs (6.6 g) | 5 mm recommended | 3h 39m 34s | 43.61 g |
 | `middle.stl` | standing on its flat belly | **build plate only** — two small pads under the tongues (2.53 g) | no | 56m 38s | 12.00 g |
 | `front.stl` | standing on its two feet | **build plate only**, overhang threshold 20° — a single column under chin and throat (6.75 g) | 5 mm recommended | 3h 24m 28s | 35.20 g |
 
-Total about **7 h 39 min** and **86 g** (PrusaSlicer estimate). `dog_print.3mf` has all three parts on one plate.
+Total about **7 h 59 min** and **91 g** (PrusaSlicer estimate). `dog_print.3mf` has all three parts on one plate.
 
 Important: use *build-plate-only* supports. "Supports everywhere" would fill the joint slots. With build-plate-only supports nothing can get
 into the slots (checked in the g-code: 0 support moves inside the joint).
-All undersides of the rear section are shaped at 45° or steeper, so it prints without any support.
+The slot floors are closed underneath, which is what keeps build-plate supports out of the joints.
 
 ## Assembly
 
-1. Remove brim and the support column under the chin.
+1. Remove the brims, the support under the haunch (rear) and the support column under the chin (front).
 2. Clean the support pads off the underside of the two tongues. Hold the middle piece belly down and push one tongue straight into the slot at the cut face of the rear section until it clicks onto the post.
 3. Push the front section onto the other tongue the same way.
 4. To take it apart, pull the sections straight apart.
@@ -84,4 +84,4 @@ validation_report.md measured results
 ```
 Rebuild: `cd source && python3 generate.py && python3 make_3mf.py && python3 validate.py && python3 slice_all.py && blender -b -P render_blender.py && python3 compare.py && python3 demo.py && python3 build_docs.py`
 
-Earlier versions remain available as releases v1.0 (movable head and tail, superseded) and v2.0 (shallower middle piece).
+Earlier versions remain available as releases v1.0 (movable head and tail, superseded), v2.0 and v2.1.
