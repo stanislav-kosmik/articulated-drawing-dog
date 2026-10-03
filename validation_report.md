@@ -1,132 +1,114 @@
-# Validation report
+# Validation report (final version)
 
-All numbers below were measured by `scripts/validate.py` (trimesh + manifold3d) and `scripts/slice_all.py`
-(PrusaSlicer CLI) on the delivered files; raw data: `build/validation.json`, `build/slicing.json`.
+Measured by `source/validate.py` (trimesh + manifold3d) and `source/slice_all.py` (PrusaSlicer CLI) on the delivered files.
+Raw data: `build/validation.json`, `build/slicing.json`. Nothing here has been physically printed.
 
-## 1. Dimensions
+## Architecture
 
-Assembled, neutral pose: **141.23 x 32.9 x 110.47 mm** (length x width x height).
-Solid volume 139.6 cm³.
+* Printed parts: **3** (rear, middle, front). Articulated interfaces: **2**.
+* Joint 1: rear <-> middle, vertical axis at x=48.04. Joint 2: middle <-> front, vertical axis at x=96.38. Both lie in the torso.
+* Tail: rear (same shell). Head and neck: front (same shell).
+* Middle piece: 28.44 mm long at the flanks (11.34 mm at the centre line), cut from the same torso field as its neighbours.
+* Assembled size: **150.75 x 30.11 x 113.38 mm**.
 
-## 2. Mesh quality
+## Meshes
 
-| File | Triangles | Watertight | 2-manifold edges / manifold3d status | Outward normals | Shells | Zero-area faces | Duplicate faces | Free of self-intersection | Bounding box (mm) |
-|---|---|---|---|---|---|---|---|---|---|
-| `stl/body.stl` | 51204 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 118.49 x 32.9 x 74.0 |
-| `stl/head.stl` | 25746 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 39.84 x 26.0 x 40.7 |
-| `stl/tail.stl` | 8492 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 27.26 x 58.22 x 9.8 |
-| `dog_assembled.stl` | 85166 | yes | yes / NoError | yes | 3 | 0 | 0 | yes | 141.23 x 32.9 x 110.47 |
-| `test/joint_tolerance_test.stl` | 33158 | yes | yes / NoError | yes | 4 | 0 | 0 | yes | 73.5 x 70.25 x 24.0 |
+| File | Triangles | Watertight | 2-manifold / manifold3d | Outward normals | Shells | Zero-area | Duplicate | No self-intersection | Bounding box (mm) | Volume (cm³) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `stl/rear.stl` | 25748 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 66.35 x 30.01 x 113.38 | 85.3 |
+| `stl/middle.stl` | 4730 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 52.6 x 30.01 x 24.92 | 11.97 |
+| `stl/front.stl` | 30768 | yes | yes / NoError | yes | 1 | 0 | 0 | yes | 72.06 x 30.11 x 97.55 | 52.67 |
 
-`dog_assembled.stl` intentionally contains 3 shells (body, head, tail in place, shown in their installed state);
-the test file contains 4 separate test pieces. Each production STL is a single shell.
+One shell per part means legs and tail (rear) and legs, neck, head and ears (front) are structurally one piece with their section.
 
-## 3. Joint A — head ball joint
+## Joints
 
-| Quantity | Value |
+Joint dimensions (identical for both): post Ø11.0, clip bore Ø10.8, clip arm 1.8 mm, wrap 216°,
+mouth 10.27 mm, tongue 7.0 mm, neck 6.0 mm, slot height 7.55 mm, seam radius 18.0 mm.
+
+### Joint 1 — rear / middle
+
+| Check | Result |
 |---|---|
-| Ball diameter / width across flats | 12.0 / 7.6 mm |
-| Socket diameter | 12.2 mm (radial clearance 0.1 mm) |
-| Ball-half spread (as printed) | 0.25 mm per side -> elastic preload interference 0.15 mm per side (overlap volume 12.21 mm³) |
-| Throat diameter | 11.773 mm |
-| Stalk diameter / slot / moat outer diameter | 7.4 / 2.0 / 9.8 mm |
-| Flexing length / half-stalk thickness | 12.6 / 2.7 mm |
-| Min. head wall around socket + tunnel | 1.85 mm |
-| Ball stalk cross-section (each half, at z = 60) | [[2.7, 7.12], [2.7, 7.12]] mm |
+| Interference over ±30° (31 angles, 2° steps) | **0.0 mm³** |
+| Hard stops (last collision-free angle, 0.5° steps) | **-32.0° … +32.0°** |
+| Seam gap measured at -30° / 0° / +30° | 0.485 / 0.485 / 0.492 mm |
+| Vertical play of the tongue (down / up) | 0.2 / 0.35 mm |
+| Clip preload (overlap of as-printed clip with post) | 13.046 mm³ (= 0.1 mm radial, intentional) |
+| Assembly path, rigid | 3.45 mm³ overlap (the snap) |
+| Assembly path with clip arms opened | collision-free at **0.3 mm per arm** (room: 0.7 mm); est. peak strain 1.06 % in-layer |
+| Retention: pulled apart 1.5 mm rigidly | 2.96 mm³ overlap -> the clip must open again to release |
+| Sustained strain from preload (estimate) | 0.53 % |
+| Slot floor under the clip (min / mean thickness, coverage) | 1.12 / 9.93 mm, 100.0 % |
+| Material above the slot | 18.12 mm |
+| Slot side walls at r = 17.4 / 15 / 12 mm (both sides) | [2.4, 2.45, 4.6, 4.6, 6.2, 6.2] mm |
 
-**Range of motion.** 351 poses were tested over yaw ±90° (15° steps) x nod ±15° (5° steps) x
-sideways tilt ±12° (6° steps), limited to a combined tilt of 15.7°, with the ball in its installed state:
-maximum body/head interference volume = **0.0 mm³**.
+### Joint 2 — middle / front
 
-Single-axis hard stops (last collision-free angle): yaw -102.0° … +102.0°, nod -19.0° … +19.0°,
-sideways tilt -19.0° … +19.0°.
-
-Minimum body-to-head gap at sample poses (the 0.096 mm value is the ball/socket clearance itself, nominal 0.10):
-
-| yaw | nod | tilt | min gap (mm) |
-|---|---|---|---|
-| 0 | 0 | 0 | 0.096 |
-| 90 | 0 | 0 | 0.096 |
-| -90 | 0 | 0 | 0.096 |
-| 0 | 15 | 0 | 0.096 |
-| 0 | -15 | 0 | 0.096 |
-| 0 | 0 | 12 | 0.096 |
-| 45 | 10 | 10 | 0.096 |
-| -90 | -10 | -10 | 0.096 |
-| 90 | 15 | 0 | 0.096 |
-| -90 | 0 | 12 | 0.096 |
-
-**Assembly path** (head pushed straight down (-z) onto the ball; path sampled every 0.5 mm over 20 mm): pushing the parts together rigidly gives up to 12.21 mm³ overlap
-(= the snap). With both ball halves deflected inward the path becomes collision-free at **0.36 mm per half**;
-the slot allows 1.0 mm. Estimated peak bending strain while snapping ≈ 0.92 %,
-sustained strain from the preload ≈ 0.38 % (beam estimate).
-**Retention:** lifting the seated head 1 mm rigidly produces 7.3 mm³ of overlap at the throat, i.e. it cannot come off without re-squeezing the ball.
-
-## 4. Joint B — tail swivel
-
-| Quantity | Value |
+| Check | Result |
 |---|---|
-| Pin diameter / across flats / length | 10.0 / 9.8 / 21.5 mm |
-| Bore diameter / depth | 10.4 / 22.6 mm (radial clearance 0.2 mm) |
-| Barb diameter / engagement per side | 11.4 / 0.5 mm |
-| Undercut cavity diameter | 12.2 mm |
-| Friction band diameter | 10.6 mm (0.1 mm radial preload) |
-| Slot / arm thickness / arm flex length | 3.6 / 3.2 / 16.3 mm |
-| Axial play | 0.45 mm |
-| Min. body wall around bore and undercut | 3.9 mm |
+| Interference over ±30° (31 angles, 2° steps) | **0.0 mm³** |
+| Hard stops (last collision-free angle, 0.5° steps) | **-32.0° … +32.0°** |
+| Seam gap measured at -30° / 0° / +30° | 0.486 / 0.485 / 0.487 mm |
+| Vertical play of the tongue (down / up) | 0.2 / 0.35 mm |
+| Clip preload (overlap of as-printed clip with post) | 13.046 mm³ (= 0.1 mm radial, intentional) |
+| Assembly path, rigid | 3.45 mm³ overlap (the snap) |
+| Assembly path with clip arms opened | collision-free at **0.3 mm per arm** (room: 0.7 mm); est. peak strain 1.06 % in-layer |
+| Retention: pulled apart 1.5 mm rigidly | 2.96 mm³ overlap -> the clip must open again to release |
+| Sustained strain from preload (estimate) | 0.53 % |
+| Slot floor under the clip (min / mean thickness, coverage) | 1.48 / 13.08 mm, 100.0 % |
+| Material above the slot | 15.57 mm |
+| Slot side walls at r = 17.4 / 15 / 12 mm (both sides) | [2.0, 2.0, 4.6, 4.6, 6.2, 6.2] mm |
 
-**Range of motion.** Full 360°, tested every 10° (36 positions). The only body/tail overlap is the intended friction band
-(4.725–4.726 mm³, constant with angle, confined to the band: yes).
-With the band excluded: interference **0.0 mm³**, minimum gap 0.15 mm.
+### Whole dog
 
-**Assembly path** (tail peg pushed straight down (-z) into the bore; path sampled every 0.5 mm over 24 mm): rigid overlap up to 15.05 mm³ (the snap); collision-free once each arm is deflected
-**0.6 mm** (slot allows 1.8 mm). Estimated peak strain ≈ 1.08 %, with layers running along the arms.
-**Retention:** lifting the seated tail 2 mm rigidly gives 7.64 mm³ overlap (barbs on the ledge).
+25 combinations of joint 1 and joint 2 in {-30, -15, 0, 15, 30}° (rear–middle, middle–front and rear–front checked):
+maximum interference **0.0 mm³**.
 
-## 5. Feature thickness
+## Structure
 
-| Feature | Measured section (mm) |
+| Feature | Section: min x max mm, area mm² |
 |---|---|
-| Legs at 15 mm above floor (each of 4) | [[11.0, 13.99], [11.0, 13.49], [10.99, 11.49], [10.99, 11.49]] |
-| Ears, 9 mm below the higher tip | [[7.25, 7.34], [6.73, 6.88]] |
-| Ears, 4 mm below the higher tip | [[3.67, 3.74], [4.62, 4.65]] |
-| Tail, mid-height | [[9.8, 10.14]] |
+| Rear legs at 15 mm height | [[11.14, 11.5, 117.6], [11.5, 24.64, 270.7]] |
+| Front legs at 15 mm height | [[10.43, 11.5, 109.4], [10.11, 11.5, 105.7]] |
+| Tail at z = 95 mm | [[9.97, 10.88, 90.4]] |
+| Tail root at z = 82 mm | [[10.0, 13.82, 118.4]] |
+| Ears at z = 91.3 mm | [[5.44, 5.52, 23.7], [4.48, 4.49, 15.9]] |
+| Tongue neck | 42.0 mm² |
 
-## 6. Standing stability
+## Standing
 
-Feet in contact with the floor: **4** (footprint x [4.4, 104.8], y [-15.6, 15.6] mm). Uniform-density centre of mass:
+| Pose | Feet on ground | Centre of mass (mm) | Margin to tipping edge (mm) | Tilt to tip over |
+|---|---|---|---|---|
+| straight | 4 | [59.9, -0.5, 54.4] | 14.3 | 14.7° |
+| both joints +30 (C-curve) | 4 | [55.0, 13.0, 54.4] | 10.6 | 11.0° |
+| S-curve +30/-30 | 4 | [57.3, 8.9, 54.4] | 12.5 | 12.9° |
+| joint 1 +30 | 4 | [56.7, 11.3, 54.4] | 12.7 | 13.2° |
 
-| Pose | Centre of mass (mm) | Margin to edge of support polygon (mm) | Tilt needed to tip |
-|---|---|---|---|
-| neutral | [58.8, -0.0, 52.9] | 15.6 | 16.4° |
-| head 90 left, tail 90 | [58.1, 0.7, 52.9] | 14.9 | 15.8° |
-| head 90 right nose down, tail reversed | [58.1, -0.8, 52.7] | 14.8 | 15.7° |
+## Slicing
 
-## 7. Slicing
+Slicer: **[2026-10-03 09:16:15.373618] [0x00007b485160bd00] [trace]   Initializing StaticPrintConfigs**. Settings: `--nozzle-diameter 0.4 --layer-height 0.2 --first-layer-height 0.2 --perimeters 3 --top-solid-layers 5 --bottom-solid-layers 4 --fill-density 15% --fill-pattern gyroid --filament-diameter 1.75 --filament-density 1.24 --filament-type PLA --temperature 210 --first-layer-temperature 215 --bed-temperature 60 --first-layer-bed-temperature 60`.
 
-Slicer: **[2026-10-03 08:05:54.940926] [0x000077e8e7036d00] [trace]   Initializing StaticPrintConfigs**. Settings: `--nozzle-diameter 0.4 --layer-height 0.2 --first-layer-height 0.2 --perimeters 4 --top-solid-layers 5 --bottom-solid-layers 4 --fill-density 15% --fill-pattern gyroid --filament-diameter 1.75 --filament-density 1.24 --filament-type PLA --temperature 210 --first-layer-temperature 215 --bed-temperature 60 --first-layer-bed-temperature 60`.
-
-| File | Sliced | Warnings | Layers | Est. time | Filament | Supports | Support share of filament | Bed contact (mm²) |
+| File | Sliced | Warnings | Layers | Time | Filament | Supports | Support material | Bed contact (mm²) |
 |---|---|---|---|---|---|---|---|---|
-| `stl/body.stl` | yes | 0 | 466 | 7h 11m 23s | 84.55 g | on (build plate only) | 28.4 % | 597.6 |
-| `stl/head.stl` | yes | 0 | 203 | 54m 52s | 11.02 g | off | 0.0 % | 408.2 |
-| `stl/tail.stl` | yes | 0 | 49 | 21m 53s | 4.51 g | off | 0.0 % | 228.4 |
-| `test/joint_tolerance_test.stl` | yes | 0 | 120 | 2h 50m 31s | 23.66 g | off | 0.0 % | 1139.9 |
-| `dog_print.3mf` | yes | 0 | 516 | 8h 34m 40s | 101.14 g | on (build plate only) | 24.9 % | - |
+| `stl/rear.stl` | yes | 0 | 567 | 3h 15m 12s | 37.70 g | none | 0.0 g (0.0 %) | 409.5 |
+| `stl/middle.stl` | yes | 0 | 125 | 38m 1s | 7.50 g | none | 0.0 g (0.0 %) | 359.0 |
+| `stl/front.stl` | yes | 0 | 663 | 3h 24m 27s | 35.20 g | build plate only | 6.75 g (19.2 %) | 241.0 |
+| `dog_print.3mf` | yes | 0 | 567 | 7h 2m 52s | 73.87 g | none | 0.0 g (0.0 %) | - |
 
-Downward faces steeper than 45° (not on the bed), from the STL: body 1698.5 mm² (supported),
-head 129.6 mm² and tail 241.1 mm² (unsupported; these are the rounded bottom edges,
-the eye dimples, mouth groove, underside of the nose and the small flat cap of the socket roof — all short spans).
-The plate file was sliced with supports on globally only to prove it loads and slices; in practice enable supports for the body only.
+* Production total (rear + middle + front): **7 h 17 min, 80 g**.
+* Rear: no supports. The only flat ceilings are the two short bridges around the pivot post ({'58.9': 116.3} mm² by height).
+* Front: supports only at model x = [108.6, 154.5] mm (chin / throat column); support moves inside the joint slot: **0**.
+* A self-support pass in the generator removed 3.2 cm³ (rear) and 1.8 cm³ (front) of material that would have needed support; this only affects undersides hidden in the side view.
+* The plate file was sliced without supports only to confirm it loads; for a real print enable build-plate-only supports for the front part.
 
-## 8. Known compromises
+## Known compromises
 
-* **The body needs supports** (about a quarter of its filament) under the belly box, torso and between the staggered legs.
-  This is the price of keeping the drawing's boxy belly and four separately visible legs in a single strong part.
-* **The ball stalk is printed upright**, so its layers lie across the bending direction. The geometry keeps the snap strain
-  low (≈ 0.92 %), but it is the most delicate feature: push the head on straight, do not lever it sideways past its stops.
-* The chest under the head stands about 6–8 mm further forward than in the drawing, to carry the ball stud.
-* Tail and legs are thicker than the pencil lines, for strength.
-* The little squiggle drawn between hind leg and belly is not modelled.
-* Joint feel depends on the printer; nothing here has been physically printed. Print the tolerance test first.
-* PLA slowly relaxes under constant strain, so joint friction will soften somewhat over months.
+* Not physically printed; the snap force and joint friction depend on the printer. `CLIP_PRELOAD` is the single tuning parameter.
+* Legs are staggered (one forward, one back on each end) to reproduce the four legs visible in the drawing. To print without support, the undersides
+  between them are 45° facets rather than soft curves, and the slit between the rear legs is shorter than drawn.
+* A 45° wedge under each joint (behind the front legs, in front of the rear thigh) carries the slot floor; it sits slightly outside the drawn outline.
+* The inside of the tail hook is filled to a 35° chord so the tail prints without support; the outer curve follows the drawing.
+* The rear and front sections stand on two small feet while printing, so a brim is recommended.
+* The dark scribble between rear body and middle box in the drawing is not modelled.
+* PLA relaxes under constant strain, so joint friction will soften somewhat over time.

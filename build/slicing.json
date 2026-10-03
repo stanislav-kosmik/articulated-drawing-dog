@@ -1,0 +1,139 @@
+{
+ "slicer": "[2026-10-03 09:16:15.373618] [0x00007b485160bd00] [trace]   Initializing StaticPrintConfigs",
+ "settings": "--nozzle-diameter 0.4 --layer-height 0.2 --first-layer-height 0.2 --perimeters 3 --top-solid-layers 5 --bottom-solid-layers 4 --fill-density 15% --fill-pattern gyroid --filament-diameter 1.75 --filament-density 1.24 --filament-type PLA --temperature 210 --first-layer-temperature 215 --bed-temperature 60 --first-layer-bed-temperature 60",
+ "rear": {
+  "file": "stl/rear.stl",
+  "sliced_ok": true,
+  "supports": "none",
+  "brim_mm": 5,
+  "slicer_messages": [],
+  "print_time": "3h 15m 12s",
+  "filament_g": "37.70",
+  "layers": 567,
+  "extrusion_share_percent": {
+   "Internal infill": 36.2,
+   "Perimeter": 32.8,
+   "External perimeter": 17.2,
+   "Solid infill": 10.7,
+   "Bridge infill": 1.4,
+   "Top solid infill": 1.0,
+   "Skirt/Brim": 0.5,
+   "Overhang perimeter": 0.0,
+   "Gap fill": 0.0
+  },
+  "support_share_percent": 0.0,
+  "support_filament_g": 0.0,
+  "bed_contact_area_mm2": 409.5,
+  "overhang_gt60deg_area_mm2": 167.1,
+  "flat_ceiling_area_mm2": 116.5,
+  "flat_ceilings_by_height_mm2": {
+   "58.9": 116.3
+  }
+ },
+ "middle": {
+  "file": "stl/middle.stl",
+  "sliced_ok": true,
+  "supports": "none",
+  "brim_mm": 0,
+  "slicer_messages": [],
+  "print_time": "38m 1s",
+  "filament_g": "7.50",
+  "layers": 125,
+  "extrusion_share_percent": {
+   "Perimeter": 40.5,
+   "External perimeter": 23.4,
+   "Internal infill": 22.9,
+   "Solid infill": 9.6,
+   "Bridge infill": 1.4,
+   "Top solid infill": 1.2,
+   "Gap fill": 0.6,
+   "Overhang perimeter": 0.3,
+   "Skirt/Brim": 0.2
+  },
+  "support_share_percent": 0.0,
+  "support_filament_g": 0.0,
+  "bed_contact_area_mm2": 359.0,
+  "overhang_gt60deg_area_mm2": 75.1,
+  "flat_ceiling_area_mm2": 0.2,
+  "flat_ceilings_by_height_mm2": {}
+ },
+ "front": {
+  "file": "stl/front.stl",
+  "sliced_ok": true,
+  "supports": "build plate only",
+  "brim_mm": 5,
+  "slicer_messages": [],
+  "print_time": "3h 24m 27s",
+  "filament_g": "35.20",
+  "layers": 663,
+  "extrusion_share_percent": {
+   "Perimeter": 25.8,
+   "Internal infill": 22.1,
+   "Support material": 17.8,
+   "Solid infill": 16.3,
+   "External perimeter": 13.7,
+   "Bridge infill": 1.4,
+   "Support material interface": 1.4,
+   "Top solid infill": 0.8,
+   "Skirt/Brim": 0.5,
+   "Overhang perimeter": 0.2,
+   "Gap fill": 0.0
+  },
+  "support_share_percent": 19.2,
+  "support_filament_g": 6.75,
+  "support_moves_inside_joint_pocket": 0,
+  "support_region_model_coords": {
+   "x": [
+    108.6,
+    154.5
+   ],
+   "y": [
+    -11.5,
+    11.6
+   ],
+   "z": [
+    0.2,
+    57.0
+   ]
+  },
+  "bed_contact_area_mm2": 241.0,
+  "overhang_gt60deg_area_mm2": 564.5,
+  "flat_ceiling_area_mm2": 287.0,
+  "flat_ceilings_by_height_mm2": {
+   "43.1": 2.1,
+   "55.6": 5.1,
+   "55.7": 47.4,
+   "55.8": 51.1,
+   "55.9": 28.0,
+   "56.0": 6.2,
+   "56.6": 3.2,
+   "56.7": 10.6,
+   "56.8": 13.1,
+   "56.9": 2.5,
+   "58.9": 116.3
+  }
+ },
+ "plate_3mf": {
+  "file": "dog_print.3mf",
+  "sliced_ok": true,
+  "supports": "none",
+  "brim_mm": 5,
+  "slicer_messages": [],
+  "print_time": "7h 2m 52s",
+  "filament_g": "73.87",
+  "layers": 567,
+  "extrusion_share_percent": {
+   "Perimeter": 33.1,
+   "Internal infill": 31.4,
+   "External perimeter": 17.7,
+   "Solid infill": 14.2,
+   "Bridge infill": 1.6,
+   "Top solid infill": 1.0,
+   "Skirt/Brim": 0.8,
+   "Overhang perimeter": 0.2,
+   "Gap fill": 0.1
+  },
+  "support_share_percent": 0.0,
+  "support_filament_g": 0.0
+ }
+}
